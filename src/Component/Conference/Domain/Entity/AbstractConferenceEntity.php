@@ -51,6 +51,16 @@ abstract class AbstractConferenceEntity
     }
 
 
+    /**
+     *
+     * Register new conference
+     *
+     * @param $conferenceName
+     * @param $host
+     * @param $database
+     * @param $central
+     * @return void
+     */
     public function registerNewConference($conferenceName, $host, $database, $central)
     {
         $this->conferenceName = $conferenceName;
