@@ -6,6 +6,7 @@ namespace Rst\AsComponent\Conference\Tests\Unit\Service;
 use PHPUnit\Framework\TestCase;
 use Rst\AsComponent\Conference\Application\Repository\ConferenceQueryRepositoryInterface;
 use Rst\AsComponent\Conference\Application\Service\ConferenceService;
+use Rst\AsComponent\Conference\Domain\Entity\AbstractConferenceEntity;
 use Rst\AsComponent\Payload\Payload;
 
 class ConferenceServiceTest extends TestCase
@@ -22,12 +23,18 @@ class ConferenceServiceTest extends TestCase
     {
 
         $expectedReturn = new Payload();
-        $expectedReturn->data = ['conferences1' => [], 'conferences2' => [], 'conference3' => []];
+
+        $conference1 = $this->createMock(AbstractConferenceEntity::class);
+        $conference2 = $this->createMock(AbstractConferenceEntity::class);
+        $conference3 = $this->createMock(AbstractConferenceEntity::class);
+
+        $expectedReturn->data = [$conference1, $conference2, $conference3];
         $queryRepository = $this->createMock(ConferenceQueryRepositoryInterface::class);
         $queryRepository->expects($this->once())->method('getConferences')->willReturn($expectedReturn->data);
         $conferenceService = new ConferenceService($queryRepository);
         $getConferences = $conferenceService->getConferences();
         $this->assertInstanceOf(Payload::class, $getConferences);
+
         $this->assertSame($expectedReturn->data, $getConferences->data);
         $this->assertSame(Payload::STATUS_FOUND, $getConferences->status);
     }
