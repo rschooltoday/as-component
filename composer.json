@@ -1,0 +1,25 @@
+{
+  "name": "rst/as-component",
+  "description": "AS Symfony Components",
+  "authors": [
+    {
+      "name": "pkahfi"
+    }
+  ],
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Rst\\AsComponent\\": "src/Component"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
