@@ -6,27 +6,30 @@ namespace Rst\AsComponent\Conference\Tests\Unit\Service;
 use PHPUnit\Framework\TestCase;
 use Rst\AsComponent\Conference\Application\Repository\ConferenceQueryRepositoryInterface;
 use Rst\AsComponent\Conference\Application\Service\ConferenceService;
+use Rst\AsComponent\Payload\Payload;
 
 class ConferenceServiceTest extends TestCase
 {
 
-    protected $queryRepository;
-    protected $conferenceService;
-
     public function testInitService()
     {
-        $service = $this->getConferenceService();
-        $this->assertInstanceOf(ConferenceService::class, $service);
+        $queryRepository = $this->createMock(ConferenceQueryRepositoryInterface::class);
+        $conferenceService = new ConferenceService($queryRepository);
+        $this->assertInstanceOf(ConferenceService::class, $conferenceService);
     }
 
     public function testGetConferences()
     {
 
+        $expectedReturn = new Payload();
+        $expectedReturn->data = ['conferences1' => [], 'conferences2' => [], 'conference3' => []];
         $queryRepository = $this->createMock(ConferenceQueryRepositoryInterface::class);
-        $queryRepository->expects($this->once())->method('getConferences')->willReturn(['conferences1', 'conferences2', 'conference3']);
+        $queryRepository->expects($this->once())->method('getConferences')->willReturn($expectedReturn->data);
         $conferenceService = new ConferenceService($queryRepository);
         $getConferences = $conferenceService->getConferences();
-        $this->assertIsArray($getConferences);
+        $this->assertInstanceOf(Payload::class, $getConferences);
+        $this->assertSame($expectedReturn->data, $getConferences->data);
+        $this->assertSame(Payload::STATUS_FOUND, $getConferences->status);
     }
 
 
@@ -37,7 +40,10 @@ class ConferenceServiceTest extends TestCase
         $conferenceService = new ConferenceService($queryRepository);
         $getConferenceDetail = $conferenceService->getConferenceDetail(1);
 
-        $this->assertNull($getConferenceDetail);
+        $this->assertInstanceOf(Payload::class, $getConferenceDetail);
+        $this->assertNull($getConferenceDetail->data);
+        $this->assertSame(Payload::STATUS_NOT_FOUND, $getConferenceDetail->status);
+
     }
 
     public function testGetDetailConference()
@@ -45,24 +51,17 @@ class ConferenceServiceTest extends TestCase
         $conferenceId = 1;
 
         $queryRepository = $this->createMock(ConferenceQueryRepositoryInterface::class);
-        $expectedReturn = ['conference_name' => 'lakeconference', 'host' => 'beta.lakeconference.org', 'conference_id' => 1];
-        $queryRepository->expects($this->once())->method('getConferenceDetail')
+        $expectedReturn = new Payload();
+        $expectedReturn->data = ['conference_name' => 'lakeconference', 'host' => 'beta.lakeconference.org', 'conference_id' => 1];
+        $queryRepository->expects($this->once())
+            ->method('getConferenceDetail')
             ->with($conferenceId)
-            ->willReturn($expectedReturn);
+            ->willReturn($expectedReturn->data);
         $conferenceService = new ConferenceService($queryRepository);
         $getConferenceDetail = $conferenceService->getConferenceDetail($conferenceId);
-        $this->assertSame($expectedReturn, $getConferenceDetail);
-    }
-
-    protected function getQueryRepository(): ConferenceQueryRepositoryInterface
-    {
-        return $this->queryRepository ??= $this->createMock(ConferenceQueryRepositoryInterface::class);
-    }
-
-    protected function getConferenceService(): ConferenceService
-    {
-        $queryRepository = $this->getQueryRepository();
-        return $this->conferenceService ??= new ConferenceService($queryRepository);
+        $this->assertInstanceOf(Payload::class, $getConferenceDetail);
+        $this->assertSame($expectedReturn->data, $getConferenceDetail->data);
+        $this->assertSame(Payload::STATUS_FOUND, $getConferenceDetail->status);
 
     }
 
