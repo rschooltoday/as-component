@@ -1,15 +1,29 @@
 <?php
 
 
-namespace  Rst\AsComponent\Conference\Application\Service;
+namespace Rst\AsComponent\Conference\Application\Service;
 
-class ConferenceService implements  ConferenceServiceInterface
+use Rst\AsComponent\Conference\Application\Repository\ConferenceQueryRepositoryInterface;
+
+class ConferenceService implements ConferenceServiceInterface
 {
 
 
-    public function getConferenceInfo(string $conferenceId): array
+    private ConferenceQueryRepositoryInterface $queryRepository;
+
+
+    public function __construct(ConferenceQueryRepositoryInterface $queryRepository)
     {
-        // TODO: Implement getConferenceInfo() method.
-        return [];
+        $this->queryRepository = $queryRepository;
+    }
+
+    public function getConferenceDetail(int $conferenceId): ?array
+    {
+        return $this->queryRepository->getConferenceDetail($conferenceId);
+    }
+
+    public function getConferences(): array
+    {
+        return $this->queryRepository->getConferences();
     }
 }
