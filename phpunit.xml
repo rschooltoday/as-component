@@ -17,7 +17,10 @@
             <directory>tests</directory>
         </testsuite>
         <testsuite name="conference">
-            <directory>src/Component/Conference</directory>
+            <directory>src/Component/Conference/Tests</directory>
+        </testsuite>
+        <testsuite name="user">
+            <directory>src/Component/User/Tests</directory>
         </testsuite>
     </testsuites>
 
